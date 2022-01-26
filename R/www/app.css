@@ -1,0 +1,24 @@
+
+.large-text-content td {
+     max-width:20em;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     height:28px; word-wrap:break-word;
+     white-space: nowrap;
+}
+
+#custom_site_input_textarea{
+    font-size:.8rem;
+    width:100%;
+}
+
+.selectize-input{
+    height:6rem !important;
+    overflow-y: scroll !important;
+}
+
+#select_delimiter{
+    color:'red' !important;
+    font-family: times, serif !important;
+    font-weight: 1000 !important;
+}
