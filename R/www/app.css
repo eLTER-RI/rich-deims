@@ -1,10 +1,23 @@
+@keyframes spin_it {
+    0% {transform: rotate(0deg);}
+    100% {transform:  rotate(360deg);}
+}
+
+#table_spinner {
+    height: 200px; width: 200px;
+    position: relative;
+    animation-name: spin_it;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
 
 .large-text-content td {
-     max-width:20em;
-     overflow: hidden;
-     text-overflow: ellipsis;
-     height:28px; word-wrap:break-word;
-     white-space: nowrap;
+    max-width:20em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height:28px; word-wrap:break-word;
+    white-space: nowrap;
 }
 
 #custom_site_input_textarea{
