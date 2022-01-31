@@ -30,17 +30,15 @@ ui <- fluidPage(
                    actionButton('select_all_nets', 'select all')
                ),
                div(
-                   shinycssloaders::withSpinner(
-                                        selectizeInput(inputId = 'select_net', label = "",
-                                                       choices = NULL,
-                                                       multiple = TRUE,
-                                                       options = list(
-                                                           placeholder = 'click to select networks',
-                                                           openOnFocus = TRUE
-                                                       )
-                                                       )
-                                       ,proxy.height='40px',size=.5,type=7)
-               ),
+                   selectizeInput(inputId = 'select_net', label = "",
+                                  choices = NULL,
+                                  multiple = TRUE,
+                                  options = list(
+                                      placeholder = 'click to select networks',
+                                      openOnFocus = TRUE
+                                  )
+                                  )
+               ), 
                div(p('or enter sites')),
                textAreaInput(
                    inputId = 'custom_site_input_textarea',
@@ -90,8 +88,9 @@ ui <- fluidPage(
                                         )
                                         ),
                                     uiOutput(outputId = 'wait_for_table'),                                      
-                                    div(                                    
-                                        DT::DTOutput(outputId = 'active_site_table')
+                                    div(
+                                        DT::DTOutput(outputId = 'active_site_table') %>%
+                                        withSpinner(id='table_spinner', image='data/logo.svg')
                                     ),
                                     div(class='btn-group',
                                         downloadButton("download_csv", "CSV") ##,
