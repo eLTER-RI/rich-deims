@@ -5,33 +5,42 @@
 ## 'related ressources' into a link
 
 ## takes 560 seconds for 1240 sites
-get_all_sites_as_big_json <- function(){
-    ids <- jsonlite::fromJSON('https://deims.org/api/sites/') %>% 
-         ## head %>%
-        .$id %>% .$suffix
-    get_single_json <- function(id){
-        jsonlite::read_json(paste0('https://deims.org/api/sites/',id),
-                            simplifyVector = TRUE ## important!
-                            )
-    }
-    big_tree_list <- list()
-    ids %>%
-        purrr::walk(function(id){
-            big_tree_list[[id]] <<- get_single_json(id)
-        })
-    big_tree_list
+
+
+
+
+update_lokal_datafile <- \(){
+  u <- 'https://deims.org/exp/enriched'
+  
+  ## get an overview (site ID and site tags) from above URL "u"
+  ids <- jsonlite::fromJSON(u)
+  
+  jsons <- 
+    1:nrow(ids) |> 
+    head() |> 
+    Map(f = \(i){ the_list <- sprintf('https://deims.org/api/sites/%s',
+                                      ids$field_deims_id[i]
+    ) |> jsonlite::read_json()
+    
+    ##the_list$site_tags <- ids$field_tags[i] |> strsplit(split = ' ?, ?')
+    the_list
+    })
+  
+  save(jsons, file = './R/www/data/test.RData')
 }
 
-wormify <- function(l, url = '', title=''){
-  sep = '|'
-  urls <- pluck(l, url)
-  titles <- pluck(l, title)
-  intro  <- span(length(titles), class='badge')
-  ifelse(url != '',
-         return(paste0(intro,'<a href=',urls,'>', titles,'</a>',
-                       collapse = sep)),
-         paste(intro,titles, collapse = sep))
-}
+## update_lokal_datafile()
+
+## wormify <- function(l, url = '', title=''){
+##   sep = '|'
+##   urls <- pluck(l, url)
+##   titles <- pluck(l, title)
+##   intro  <- span(length(titles), class='badge')
+##   ifelse(url != '',
+##          return(paste0(intro,'<a href=',urls,'>', titles,'</a>',
+##                        collapse = sep)),
+##          paste(intro,titles, collapse = sep))
+## }
 
 vector_as_named <- function(v){
     set_names(v, v)
@@ -150,4 +159,13 @@ prettify_colnames <- function(col_titles){
         gsub('\\.','\n',.)
 }
 
+
+parse_settings  <- function(a = list(), n = list(), f = list()){
+    jsonlite::toJSON(list(
+                  attributes = a,
+                  network_ids = n,
+                  flag_attributes = f
+              )
+              ) %>% as.character
+}
 
