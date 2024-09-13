@@ -21,9 +21,7 @@ function(p) {require(p, character.only = TRUE)})
 ## require helper functions
 source('./helpers.R')
 
-data_file_name <- 'site-details-as-json-2024-09-09.RData'
-data_file_name <- 'site-details-as-json.RData'
-data_file_name <- 'test.RData'
+data_file_name <- 'site-details-2024-09-13.RData'
 
 
 
@@ -50,9 +48,7 @@ server <- function(input, output, session) {
     session = getDefaultReactiveDomain()
     shinyjs::useShinyjs()
     
-    
-    output$debugInfo <- renderPrint(file.path('./www/data', data_file_name))
-    
+
     output$file_info <- renderUI(tags$small(p(paste('file:', data_file_name)),
                                             p(paste('last updated:', file.info(file.path('www/data', data_file_name))$ctime))
     ))
@@ -70,11 +66,8 @@ server <- function(input, output, session) {
     ## the .RDATA file has to contain the json info as an object named "jsons" !
     load(file.path('./www/data/', data_file_name))
     # load('./www/data/site-details-as-json.RData')
-    load('./www/data/attribute_list.RData')
-    
-    
-    
-    
+    # load('./www/data/attribute_list.RData')
+
     
     ## live retrieval like so (but takes 560s)
     ## jsons <- get_all_sites_as_big_json()
@@ -170,7 +163,8 @@ server <- function(input, output, session) {
     updateSelectizeInput(session = session,
                          inputId = 'select_net',
                          label = NULL,
-                         choices = network_choices
+                         choices = network_choices,
+                         selected = network_choices
     )
     
     
@@ -200,7 +194,6 @@ server <- function(input, output, session) {
             gsub('2$', '', .) %>% 
             .[. %in% names(site_details)]
         attribute_vector <- c('id', attribute_vector) %>% unique
-        output$debugInfo <- renderPrint("attribute_vector")
         active_attributes(attribute_vector)
         active_site_data(site_details %>% 
                              filter(id %in% active_site_ids()) %>%

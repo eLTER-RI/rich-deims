@@ -3,7 +3,7 @@
 ## glue components of site attributes to HTML-string
 ## for later display in table. e. g. combining URL and title of
 ## 'related ressources' into a link
-
+## call this function to get updated site details
 ## takes 560 seconds for 1240 sites
 update_local_datafile <- \(n = Inf){
   url_overview <- 'https://deims.org/exp/enriched'
@@ -28,9 +28,7 @@ update_local_datafile <- \(n = Inf){
 }
 
 
-vector_as_named <- function(v){
-    set_names(v, v)
-}
+vector_as_named <- function(v){set_names(v, v)}
 
 
 
