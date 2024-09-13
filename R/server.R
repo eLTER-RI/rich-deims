@@ -26,18 +26,6 @@ data_file_name <- 'site-details-as-json.RData'
 data_file_name <- 'test.RData'
 
 
-## the .RDATA file has to contain the json info as an object named "jsons" !
-load(file.path('./www/data/', data_file_name))
-# load('./www/data/site-details-as-json.RData')
-load('./www/data/attribute_list.RData')
-
-
-
-# jsons  <- head(jsons, 20)
-
-## TODO ============================== 
-## - replace multiple occurence of current_upload with reactive value
-
 
 ## setup first-time user guide:
 guide <- Cicerone$
@@ -63,6 +51,8 @@ server <- function(input, output, session) {
     shinyjs::useShinyjs()
     
     
+    output$debugInfo <- renderPrint(file.path('./www/data', data_file_name))
+    
     output$file_info <- renderUI(tags$small(p(paste('file:', data_file_name)),
                                             p(paste('last updated:', file.info(file.path('www/data', data_file_name))$ctime))
     ))
@@ -74,6 +64,16 @@ server <- function(input, output, session) {
     ))
     
     observeEvent(input$guide,  guide$init()$start(1))
+    
+    
+    
+    ## the .RDATA file has to contain the json info as an object named "jsons" !
+    load(file.path('./www/data/', data_file_name))
+    # load('./www/data/site-details-as-json.RData')
+    load('./www/data/attribute_list.RData')
+    
+    
+    
     
     
     ## live retrieval like so (but takes 560s)
@@ -187,7 +187,7 @@ server <- function(input, output, session) {
     
     
     observeEvent(input$tree_attributes, {       
-        selection <- input$tree_attributes %>% get_selected(.,format='names')
+        selection <- input$tree_attributes %>% get_selected(., format='names')
         branches <- selection %>% map(~ paste0(attr(.x,'ancestry'),collapse='.'))
         leaves <- selection %>% unlist
         attribute_vector <- 
@@ -199,7 +199,8 @@ server <- function(input, output, session) {
             ## conflicts with reserved names, e.g.: 'count') - so that attributes are found.
             gsub('2$', '', .) %>% 
             .[. %in% names(site_details)]
-        attribute_vector <- c('id',attribute_vector) %>% unique
+        attribute_vector <- c('id', attribute_vector) %>% unique
+        output$debugInfo <- renderPrint("attribute_vector")
         active_attributes(attribute_vector)
         active_site_data(site_details %>% 
                              filter(id %in% active_site_ids()) %>%
@@ -294,9 +295,7 @@ server <- function(input, output, session) {
         }
     )
     
-    
-    
-    
+
     get_tree_data <- function(){
         att_tree_loader$set(10)    ## expand progress bar to 10%
         treeData <-   data.frame(s = paste0('root.',
@@ -318,6 +317,9 @@ server <- function(input, output, session) {
         att_tree_loader$set(100)
         treeData
     }
+    
+    
+
     output$tree_attributes <- renderTree(get_tree_data())
     
     

@@ -5,9 +5,6 @@
 ## 'related ressources' into a link
 
 ## takes 560 seconds for 1240 sites
-
-
-
 update_local_datafile <- \(n = Inf){
   url_overview <- 'https://deims.org/exp/enriched'
   
@@ -21,75 +18,20 @@ update_local_datafile <- \(n = Inf){
                             overview$field_deims_id[i]
                             )
       the_list <- jsonlite::read_json(url_detail, simplifyVector = TRUE)
-    ##the_list$site_tags <- ids$field_tags[i] |> strsplit(split = ' ?, ?')
+      print(overview$field_tags[i] |> strsplit(split = ' ?, ?'))
+      the_list$attributes$projectRelated <- c(the_list$attributes$projectRelated,
+                                              site_tags = overview$field_tags[i]) ## |> strsplit(split = ' ?, ?')
       the_list
     })
   
   save(jsons, file = './R/www/data/test.RData')
 }
 
-## update_local_datafile(5)
-
-
-
-
-
-get_all_sites_as_big_json <- function(n = Inf){
-  u <- 'https://deims.org/exp/enriched'
-  ## get an overview (site ID and site tags) from above URL "u"
-  ## where the site ID is stored as "field_deims_id"
-  ## and the tags as "field_tags":
-  overview <- jsonlite::fromJSON(u)
-  
-  ids <- overview$field_deims_id |> 
-    head(n)
-  get_single_json <- function(id){
-    jsonlite::read_json(paste0('https://deims.org/api/sites/',id),
-                        simplifyVector = TRUE ## important!
-    )
-  }
-  big_tree_list <- list()
-  ids %>%
-    purrr::walk(function(id){
-      ## print(id);
-      big_tree_list[[id]] <<- get_single_json(id)
-    })
-  big_tree_list
-}
-
-
-
-# get_all_sites_as_big_json(1)
-
-
-
-
-##update_lokal_datafile()
-
-## wormify <- function(l, url = '', title=''){
-##   sep = '|'
-##   urls <- pluck(l, url)
-##   titles <- pluck(l, title)
-##   intro  <- span(length(titles), class='badge')
-##   ifelse(url != '',
-##          return(paste0(intro,'<a href=',urls,'>', titles,'</a>',
-##                        collapse = sep)),
-##          paste(intro,titles, collapse = sep))
-## }
 
 vector_as_named <- function(v){
     set_names(v, v)
 }
 
-
-## require(tidyverse)
-
-
-## get a basic site description (title, ID, centroid, changed)
-## from DEIMS API
-## no need to store locally as this takes roughly a second
-## sites_basic <- jsonlite::fromJSON('https://deims.org/api/sites/')
-## sites_basic %>% nrow
 
 
 ## takes a nested JSON (like the JSON response from DEIMS api
@@ -103,23 +45,6 @@ get_attribute_strings <- function(jsons){
         unique %>%
         .[. != '']
 }
-
-
-
-## use this for the full JSON response,
-## here, this response is contained in the object 'jsons'
-get_all_attribute_strings <- function(json_response){
-    get_attributes_of_nested_list <- function(l){
-        names(rapply(l, function(li) li)) %>% unlist %>%
-            gsub('[[:digit:]]$','',.) %>%## remove trailing enumerator for JSON array entries
-            unique
-    }
-    json_response %>%
-        map(~ get_attributes_of_nested_list(.x)) %>%
-        reduce(c) %>%
-        unique
-}
-
 
 
 get_site_details_from_json <- function(jsons){
@@ -138,6 +63,10 @@ get_site_details_from_json <- function(jsons){
         as_tibble %>%
         rename('id' = 'id.suffix')
 }
+
+
+# get_site_details_from_json(jsons) |> names()
+
 
 
 get_one_hot_candidate_attributes <- function(data){
