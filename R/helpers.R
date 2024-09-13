@@ -8,28 +8,63 @@
 
 
 
-
-update_lokal_datafile <- \(){
-  u <- 'https://deims.org/exp/enriched'
+update_local_datafile <- \(n = Inf){
+  url_overview <- 'https://deims.org/exp/enriched'
   
   ## get an overview (site ID and site tags) from above URL "u"
-  ids <- jsonlite::fromJSON(u)
+  overview <- jsonlite::fromJSON(url_overview) |> head(n)
   
   jsons <- 
-    1:nrow(ids) |> 
-    head() |> 
-    Map(f = \(i){ the_list <- sprintf('https://deims.org/api/sites/%s',
-                                      ids$field_deims_id[i]
-    ) |> jsonlite::read_json()
-    
+    1:nrow(overview) |> 
+    Map(f = \(i){
+      url_detail <- sprintf('https://deims.org/api/sites/%s',
+                            overview$field_deims_id[i]
+                            )
+      the_list <- jsonlite::read_json(url_detail, simplifyVector = TRUE)
     ##the_list$site_tags <- ids$field_tags[i] |> strsplit(split = ' ?, ?')
-    the_list
+      the_list
     })
   
   save(jsons, file = './R/www/data/test.RData')
 }
 
-## update_lokal_datafile()
+## update_local_datafile(5)
+
+
+
+
+
+get_all_sites_as_big_json <- function(n = Inf){
+  u <- 'https://deims.org/exp/enriched'
+  ## get an overview (site ID and site tags) from above URL "u"
+  ## where the site ID is stored as "field_deims_id"
+  ## and the tags as "field_tags":
+  overview <- jsonlite::fromJSON(u)
+  
+  ids <- overview$field_deims_id |> 
+    head(n)
+  get_single_json <- function(id){
+    jsonlite::read_json(paste0('https://deims.org/api/sites/',id),
+                        simplifyVector = TRUE ## important!
+    )
+  }
+  big_tree_list <- list()
+  ids %>%
+    purrr::walk(function(id){
+      ## print(id);
+      big_tree_list[[id]] <<- get_single_json(id)
+    })
+  big_tree_list
+}
+
+
+
+# get_all_sites_as_big_json(1)
+
+
+
+
+##update_lokal_datafile()
 
 ## wormify <- function(l, url = '', title=''){
 ##   sep = '|'

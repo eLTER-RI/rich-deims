@@ -23,7 +23,7 @@ source('./helpers.R')
 
 data_file_name <- 'site-details-as-json-2024-09-09.RData'
 data_file_name <- 'site-details-as-json.RData'
-# data_file_name <- 'test.RData'
+data_file_name <- 'test.RData'
 
 
 ## the .RDATA file has to contain the json info as an object named "jsons" !
