@@ -24,8 +24,13 @@ update_local_datafile <- \(n = Inf){
       the_list
     })
   
-  save(jsons, file = './R/www/data/test.RData')
+  save(jsons, file = sprintf('./R/www/data/site-details-%s.RData', Sys.Date()))
 }
+
+## current values of fielt_tags:
+## [1] "3rd_Categories_Screening_eLTSER_v09.1" "eLTER site (without umbrellas)"        "elter_count"                           "elter_sub"                            
+## [5] "automatically generated (ICOS)"        "elter_descriptive"
+
 
 
 vector_as_named <- function(v){set_names(v, v)}

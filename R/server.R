@@ -325,11 +325,17 @@ server <- function(input, output, session) {
             'ICP Forests' = 'attributes.affiliation.networks.network.name|ICP Forests',
             'ICOS' = 'attributes.affiliation.networks.network.name|ICOS',
             'LTER Europe' = 'attributes.affiliation.networks.network.name|LTER Europe',
-            '3rd' = 'attributes.projectRelated.site_tags|3rd_Categories'
+            '3rd party site' = 'attributes.projectRelated.site_tags|3rd_Categories',
+            'eLTSER' = 'attributes.projectRelated.site_tags|eLTSER',
+            'eLTER count' = 'attributes.projectRelated.site_tags|eLTER count',
+            'eLTER sub' = 'attributes.projectRelated.site_tags|eLTER sub',
+            'eLTER descr' = 'attributes.projectRelated.site_tags|descriptive',
+            'ICOS (autom. gen)' = 'attributes.projectRelated.site_tags|automatically generated (ICOS)'
         )
     )
     
     
+
     updatePickerInput(
         inputId = 'one_hot_picker', 
         session = session,
@@ -337,6 +343,9 @@ server <- function(input, output, session) {
     )
     
     
+
+    
+
     observe({
         json <- jsonlite::parse_json(input$search_settings)
         active_attributes(unlist(json$attributes))
@@ -363,12 +372,24 @@ server <- function(input, output, session) {
                         active_attributes(c(active_attributes(), hot_attribute ))} 
                     col_pos <- grep(hot_attribute, active_attributes())
                     new_yn_col_title <- paste0(hot_attribute_short,':',hot_value)
+                    
+                    
                     new_data <- 
-                        site_details %>% 
-                        filter(id %in% active_site_ids()) %>%                
-                        mutate('{new_yn_col_title}' := grepl(hot_value, .[[hot_attribute]])) %>%
-                        ## ^^^ expand column name variable using '{expr}' and := 
-                        select(id, all_of(new_yn_col_title))
+                      site_details %>% 
+                      filter(id %in% active_site_ids()) %>%                
+                      mutate('{new_yn_col_title}' := grepl(hot_value, .[[hot_attribute]])) %>%
+                      ## ^^^ expand column name variable using '{expr}' and := 
+                      select(id, all_of(new_yn_col_title)) |>
+                      rename_with(.fn = ~ {
+                        gsub('.*3rd_Categories.*', '3rd party site', .x) 
+                        gsub('.*eLTSER.*', 'eLTSER', .x)
+                        gsub('.*without umbrellas*', 'eLTER (no umbrellas)', .x)
+                        gsub('.*elter_count.*', 'eLTER count', .x) 
+                        gsub('.*elter_sub*', 'eLTER sub', .x)
+                        gsub('.*descriptive.*', 'eLTER descr.', .x) 
+                        gsub('.*automatically generated (ICOS).*', 'ICOS (autom. gen.)', .x)
+                      })
+                    
                     left_join(active_site_data(), new_data) %>%
                         active_site_data(.)
                 }
