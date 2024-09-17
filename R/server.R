@@ -315,6 +315,7 @@ server <- function(input, output, session) {
 
     output$tree_attributes <- renderTree(get_tree_data())
     
+    ## -------------- offer selection of filter columns: --------------------------------------
     
     one_hot_value_combos <- list(
         'affiliated networks' = list(
@@ -323,7 +324,8 @@ server <- function(input, output, session) {
             'Lifewatch'='attributes.affiliation.networks.network.name|Lifewatch',
             'ICP Forests' = 'attributes.affiliation.networks.network.name|ICP Forests',
             'ICOS' = 'attributes.affiliation.networks.network.name|ICOS',
-            'LTER Europe' = 'attributes.affiliation.networks.network.name|LTER Europe'
+            'LTER Europe' = 'attributes.affiliation.networks.network.name|LTER Europe',
+            '3rd' = 'attributes.projectRelated.site_tags|3rd_Categories'
         )
     )
     
@@ -348,8 +350,15 @@ server <- function(input, output, session) {
             walk(~{
                 if(length(.x) > 0 ){
                     choice_string <- strsplit(.x,'\\|') %>% unlist
+                    ## example: hot_attribute: "attributes.affiliation.networks.network.name",
+                    ## hot_value: "ICOS"
                     hot_attribute <- choice_string[1]; hot_value  <- choice_string[2]
+                    print(hot_attribute)
+                    print(hot_value)
+                    ## hot_attribute_short is the leaf = everything after the last ".":
+                    ## from above example: "name"
                     hot_attribute_short <- hot_attribute %>% gsub('.*\\.','',.)
+                    ## active attributes are those displayed in table (columns)
                     if(!hot_attribute %in% active_attributes()) {
                         active_attributes(c(active_attributes(), hot_attribute ))} 
                     col_pos <- grep(hot_attribute, active_attributes())

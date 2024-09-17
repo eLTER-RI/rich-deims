@@ -63,9 +63,6 @@ get_site_details_from_json <- function(jsons){
 }
 
 
-# get_site_details_from_json(jsons) |> names()
-
-
 
 get_one_hot_candidate_attributes <- function(data){
 ## returns names of columns which have more than one '|'-separated values
@@ -82,6 +79,8 @@ get_one_hot_candidate_attributes <- function(data){
             c("attributes.general.abstract")
             )
 }
+
+
 
 
 get_network_names <- function(site_details){

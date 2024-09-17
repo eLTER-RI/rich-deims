@@ -85,6 +85,8 @@ ui <- fluidPage(
                ), p(),
                div(uiOutput('file_info'))
         ),
+        
+
         column(10,
                tabsetPanel(type='tabs',
                            tabPanel('Data table',
