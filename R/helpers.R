@@ -5,7 +5,7 @@
 ## 'related ressources' into a link
 ## call this function to get updated site details
 ## takes 560 seconds for 1240 sites
-update_local_datafile <- \(n = Inf){
+update_local_datafile <- function(n = Inf){
   url_overview <- 'https://deims.org/exp/enriched'
   
   ## get an overview (site ID and site tags) from above URL "u"
@@ -13,7 +13,7 @@ update_local_datafile <- \(n = Inf){
   
   jsons <- 
     1:nrow(overview) |> 
-    Map(f = \(i){
+    Map(f = function(i){
       url_detail <- sprintf('https://deims.org/api/sites/%s',
                             overview$field_deims_id[i]
                             )
