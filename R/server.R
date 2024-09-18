@@ -379,7 +379,7 @@ server <- function(input, output, session) {
                       filter(id %in% active_site_ids()) %>%                
                       mutate('{new_yn_col_title}' := grepl(hot_value, .[[hot_attribute]])) %>%
                       ## ^^^ expand column name variable using '{expr}' and := 
-                      select(id, all_of(new_yn_col_title)) |>
+                      select(id, all_of(new_yn_col_title)) %>%
                       rename_with(.fn = ~ {
                         gsub('.*3rd_Categories.*', '3rd party site', .x) 
                         gsub('.*eLTSER.*', 'eLTSER', .x)

@@ -9,18 +9,18 @@ update_local_datafile <- function(n = Inf){
   url_overview <- 'https://deims.org/exp/enriched'
   
   ## get an overview (site ID and site tags) from above URL "u"
-  overview <- jsonlite::fromJSON(url_overview) |> head(n)
+  overview <- jsonlite::fromJSON(url_overview) %>% head(n)
   
   jsons <- 
-    1:nrow(overview) |> 
+    1:nrow(overview) %>% 
     Map(f = function(i){
       url_detail <- sprintf('https://deims.org/api/sites/%s',
                             overview$field_deims_id[i]
                             )
       the_list <- jsonlite::read_json(url_detail, simplifyVector = TRUE)
-      print(overview$field_tags[i] |> strsplit(split = ' ?, ?'))
+      print(overview$field_tags[i] %>% strsplit(split = ' ?, ?'))
       the_list$attributes$projectRelated <- c(the_list$attributes$projectRelated,
-                                              site_tags = overview$field_tags[i]) ## |> strsplit(split = ' ?, ?')
+                                              site_tags = overview$field_tags[i]) ## %>% strsplit(split = ' ?, ?')
       the_list
     })
   
