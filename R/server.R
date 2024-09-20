@@ -1,4 +1,4 @@
-open## require necessary packages:
+## require necessary packages:
 sapply(c('dplyr',
          'tidyr',
          'magrittr',
@@ -12,11 +12,13 @@ sapply(c('dplyr',
          'jsonlite',
          'shinyBS',
          'cicerone',
-         'shinyBS' #,
-         ## devtools::install_github("trestletech/shinyStore")
-         ## 'shinyStore'
+         'shinyBS'
 ),
 function(p) {require(p, character.only = TRUE)})
+
+
+## renv::init() ## on datalabs, do this once from the server folder
+
 
 ## require helper functions
 source('./helpers.R')
@@ -379,7 +381,7 @@ server <- function(input, output, session) {
                       filter(id %in% active_site_ids()) %>%                
                       mutate('{new_yn_col_title}' := grepl(hot_value, .[[hot_attribute]])) %>%
                       ## ^^^ expand column name variable using '{expr}' and := 
-                      select(id, all_of(new_yn_col_title)) %>%
+                      select(id, all_of(new_yn_col_title)) |>
                       rename_with(.fn = ~ {
                         gsub('.*3rd_Categories.*', '3rd party site', .x) 
                         gsub('.*eLTSER.*', 'eLTSER', .x)
